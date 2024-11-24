@@ -119,6 +119,30 @@ public class HouseController {
     }
 
 
+    @GetMapping("/house/condition/{houseCondition}")
+    public ResponseEntity<List<HouseResponseDto>> printHousesByCondition(@PathVariable String houseCondition) {
+        HouseCondition houseConditionEnum = HouseCondition.valueOf(houseCondition.toUpperCase());
+        List<House> houseList = houseService.findAllHouses().stream()
+                .filter(house -> house.getHouseCondition().getTextCondition().equals(houseConditionEnum.getTextCondition()))
+                .toList();
 
+        List<HouseResponseDto> houseResponseDtos = houseList.stream()
+                .map(HouseHelper::convertToResponseDto)
+                .toList();
+        return new ResponseEntity<>(houseResponseDtos,HttpStatus.OK);
+    }
+
+    @GetMapping("/house/amenitie/{houseAmenitie}")
+    public ResponseEntity<List<HouseResponseDto>> printHousesByAmenity(@PathVariable String houseAmenitie) {
+        HouseAmenitie houseAmenitieEnum = HouseAmenitie.valueOf(houseAmenitie.toUpperCase());
+        List<House> houseList = houseService.findAllHouses().stream()
+                .filter(house -> house.getHouseAmenities().contains(houseAmenitieEnum))
+                .toList();
+
+        List<HouseResponseDto> houseResponseDtos = houseList.stream()
+                .map(HouseHelper::convertToResponseDto)
+                .toList();
+        return new ResponseEntity<>(houseResponseDtos,HttpStatus.OK);
+    }
 
 }

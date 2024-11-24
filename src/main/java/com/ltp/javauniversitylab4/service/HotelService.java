@@ -10,6 +10,7 @@ import com.ltp.javauniversitylab4.repository.ReserveRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -47,9 +48,8 @@ public class HotelService {
     }
 
     public Reserve findReserveByHouse(House house){
-        return reserveRepository.findAll().stream()
-                .filter(reserve -> reserve.getHouse().equals(house))
-                .findFirst()
-                .orElse(null);
+        return reserveRepository.findByHouse_HouseId(house.getHouseId());
     }
+
+
 }

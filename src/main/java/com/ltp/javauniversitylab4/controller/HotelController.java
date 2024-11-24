@@ -5,12 +5,12 @@ import com.ltp.javauniversitylab4.dto.response.HotelResponseDto;
 import com.ltp.javauniversitylab4.model.Hotel;
 import com.ltp.javauniversitylab4.model.Reserve;
 import com.ltp.javauniversitylab4.service.HotelService;
-import com.ltp.javauniversitylab4.utils.HotelHelper;
-import com.ltp.javauniversitylab4.utils.HouseHelper;
+import com.ltp.javauniversitylab4.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.Month;
 import java.util.List;
 
@@ -18,6 +18,7 @@ import java.util.List;
 public class HotelController {
     @Autowired
     private HotelService hotelService;
+
 
     @PostMapping("/hotel")
     public ResponseEntity<String> addHotel(@RequestBody HotelRequestDto hotelRequestDto) {
@@ -56,47 +57,48 @@ public class HotelController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/income")
-    public ResponseEntity<Double> printIncome(){
-        double discount = 0.8;
-
+    @GetMapping("/hotel/income")
+    public ResponseEntity<Double> printIncome() {
         double income = hotelService.findALlHouses().stream()
                 .mapToDouble(
                         house -> {
-                            Reserve reserve = hotelService.findReserveByHouse(house) ;
-                            Month reservationMonth = reserve.getDate().getMonth();
-
-                            if (reservationMonth == Month.NOVEMBER || reservationMonth == Month.MARCH) {
-                                return HouseHelper.priceOfHouse(house) * discount;
-                            } else {
-                                return HouseHelper.priceOfHouse(house);
+                            Reserve reserve = hotelService.findReserveByHouse(house);
+                            if (reserve == null) {
+                                return 0;
                             }
+                            Month reservationMonth = reserve.getDate().getMonth();
+                            return HouseHelper.priceOfHouse(house,reservationMonth);
                         }
                 )
                 .sum();
-        return new ResponseEntity<>(income,HttpStatus.OK);
+        return new ResponseEntity<>(income, HttpStatus.OK);
     }
 
-    @GetMapping("/expense")
-    public ResponseEntity<Double> printExpense(){
-        double discount = 0.8;
-
+    @GetMapping("/hotel/expense")
+    public ResponseEntity<Double> printExpense() {
         double expense = hotelService.findALlHouses().stream()
                 .mapToDouble(
                         house -> {
-                            Reserve reserve = hotelService.findReserveByHouse(house) ;
+                            Reserve reserve = hotelService.findReserveByHouse(house);
+                            if (reserve == null) {
+                                return 0;
+                            }
                             Month reservationMonth = reserve.getDate().getMonth();
 
-                            if (reservationMonth == Month.NOVEMBER || reservationMonth == Month.MARCH) {
-                                return HouseHelper.expenseOfHouse(house) * discount;
-                            } else {
-                                return HouseHelper.expenseOfHouse(house);
-                            }
+                            return HouseHelper.expenseOfHouse(house,reservationMonth);
+
                         }
                 )
                 .sum();
-        return new ResponseEntity<>(expense,HttpStatus.OK);
+        return new ResponseEntity<>(expense, HttpStatus.OK);
     }
+
+    @GetMapping("/hotel/amenities")
+    public ResponseEntity<List<HotelAmenitie>> printHotelAmenities() {
+        List<HotelAmenitie> hotelAmenities = HotelAmenitie.getAmenities();
+        return new ResponseEntity<>(hotelAmenities,HttpStatus.OK);
+    }
+
 
 
 }

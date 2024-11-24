@@ -5,6 +5,7 @@ import com.ltp.javauniversitylab4.dto.response.HouseResponseDto;
 import com.ltp.javauniversitylab4.model.Hotel;
 import com.ltp.javauniversitylab4.model.House;
 
+import java.time.Month;
 import java.util.List;
 
 public class HouseHelper {
@@ -26,15 +27,27 @@ public class HouseHelper {
         return new HouseRequestDto( houseId,houseCondition,personInHouse);
     }
 
-    public static double priceOfHouse(final House house) {
-        return house.getHouseAmenities().stream()
+    public static double priceOfHouse(final House house, Month month) {
+        double price = house.getHouseAmenities().stream()
                 .mapToDouble(HouseAmenitie::getPrice)
                 .sum();
+        double discount = 0.8;
+
+        if (month == Month.NOVEMBER || month == Month.MARCH) {
+            return price * discount;
+        }
+        return price;
     }
 
-    public static double expenseOfHouse(final House house) {
-        return house.getHouseAmenities().stream()
+    public static double expenseOfHouse(House house,Month month) {
+        double expense = house.getHouseAmenities().stream()
                 .mapToDouble(HouseAmenitie::getExpense)
                 .sum();
+        double discount = 0.8;
+
+        if (month == Month.NOVEMBER || month == Month.MARCH) {
+            return expense * discount;
+        }
+        return expense;
     }
 }

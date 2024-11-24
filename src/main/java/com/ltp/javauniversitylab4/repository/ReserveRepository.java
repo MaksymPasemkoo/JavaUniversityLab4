@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ReserveRepository extends JpaRepository<Reserve,Long> {
 
+    Reserve findByHouse_HouseId(Long houseId);
+
 }
