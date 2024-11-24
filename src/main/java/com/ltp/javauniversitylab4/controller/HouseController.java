@@ -12,27 +12,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 public class HouseController {
     @Autowired
-    private HouseService houseService;
+    private final HouseService houseService;
+
+    public HouseController(HouseService houseService) {
+        this.houseService = houseService;
+    }
 
 
     @PostMapping("/house")
-    public ResponseEntity<String> addHouse(@RequestBody HouseRequestDto houseRequestDto) {
+    public ResponseEntity<String> addHouse(@RequestBody final HouseRequestDto houseRequestDto) {
         houseService.addOrUpdateHouse(houseRequestDto);
         return new ResponseEntity<>("Success", HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/house/{id}")
-    public ResponseEntity<HouseResponseDto> findHouseById(@PathVariable Long id) {
-        House house = houseService.findHouseById(id);
+    public ResponseEntity<HouseResponseDto> findHouseById(@PathVariable final Long id) {
+        final House house = houseService.findHouseById(id);
 
-        HouseResponseDto houseResponseDto = HouseHelper.convertToResponseDto(house);
+        final HouseResponseDto houseResponseDto = HouseHelper.convertToResponseDto(house);
         if (houseResponseDto.getHouseId() != -1) {
             return new ResponseEntity<>(houseResponseDto, HttpStatus.OK);
         }
@@ -40,16 +43,16 @@ public class HouseController {
     }
 
     @PutMapping("/house")
-    public ResponseEntity<String> updateHouse(@RequestBody HouseRequestDto houseRequestDto) {
+    public ResponseEntity<String> updateHouse(@RequestBody final HouseRequestDto houseRequestDto) {
         houseService.addOrUpdateHouse(houseRequestDto);
         return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 
     @DeleteMapping("/house/{id}")
-    public ResponseEntity<String> deleteHouseById(@PathVariable Long id) {
-        House house = houseService.findHouseById(id);
+    public ResponseEntity<String> deleteHouseById(@PathVariable final Long id) {
+        final House house = houseService.findHouseById(id);
 
-        if(house.getHouseId() != -1 ) {
+        if (house.getHouseId() != -1) {
             houseService.deleteHouseById(id);
             return new ResponseEntity<>("Deleted", HttpStatus.OK);
         }
@@ -58,33 +61,34 @@ public class HouseController {
 
     @GetMapping("/houses")
     public ResponseEntity<List<HouseResponseDto>> findAllHouses() {
-        List<House> houses = houseService.findAllHouses();
+        final List<House> houses = houseService.findAllHouses();
 
-        List<HouseResponseDto> houseResponseDtos = houses.stream()
+        final List<HouseResponseDto> houseResponseDtos = houses.stream()
                 .map(HouseHelper::convertToResponseDto)
                 .toList();
 
-        if(!houseResponseDtos.isEmpty()) {
+        if (!houseResponseDtos.isEmpty()) {
             return new ResponseEntity<>(houseResponseDtos, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/houseAmenities/{id}")
-    public ResponseEntity<List<HouseAmenitie>> getHouseAmenities(@PathVariable Long id) {
-        House house = houseService.findHouseById(id);
-        if(house.getHouseId() != -1) {
+    public ResponseEntity<List<HouseAmenitie>> getHouseAmenities(@PathVariable final Long id) {
+        final House house = houseService.findHouseById(id);
+        if (house.getHouseId() != -1) {
             return new ResponseEntity<>(house.getHouseAmenities(), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("/amenitie/{id}")
-    public ResponseEntity<String> addAdditionalAmenities(@PathVariable Long id, @RequestParam String choice) {
-        HouseAmenitie enumChoice = HouseAmenitie.fromString(choice);
-        House house = houseService.findHouseById(id);
+    public ResponseEntity<String> addAdditionalAmenities(@PathVariable final Long id,
+                                                         @RequestParam final String choice) {
+        final HouseAmenitie enumChoice = HouseAmenitie.fromString(choice);
+        final House house = houseService.findHouseById(id);
 
-        HouseRequestDto houseRequestDto = HouseHelper.convertToRequestDto(house);
+        final HouseRequestDto houseRequestDto = HouseHelper.convertToRequestDto(house);
 
         if (enumChoice == HouseAmenitie.BED || enumChoice == HouseAmenitie.CHILD_BED) {
             houseRequestDto.setPersonInHouse(houseRequestDto.getPersonInHouse() + 1);
@@ -99,11 +103,11 @@ public class HouseController {
     }
 
     @GetMapping("/amenities/{id}")
-    public ResponseEntity<List<String>> findAllAmenities(@PathVariable Long id) {
-        House house = houseService.findHouseById(id);
-        List<String> hotelAndHouseAmenities = new ArrayList<>();
+    public ResponseEntity<List<String>> findAllAmenities(@PathVariable final Long id) {
+        final House house = houseService.findHouseById(id);
+        final List<String> hotelAndHouseAmenities = new ArrayList<>();
 
-        if(house.getHouseId() == -1){
+        if (house.getHouseId() == -1) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         HotelAmenitie.getAmenities().stream()
@@ -114,35 +118,34 @@ public class HouseController {
                 .map(HouseAmenitie::getAmenitiesText)
                 .forEach(hotelAndHouseAmenities::add);
 
-
         return new ResponseEntity<>(hotelAndHouseAmenities, HttpStatus.OK);
     }
 
 
     @GetMapping("/house/condition/{houseCondition}")
-    public ResponseEntity<List<HouseResponseDto>> printHousesByCondition(@PathVariable String houseCondition) {
-        HouseCondition houseConditionEnum = HouseCondition.valueOf(houseCondition.toUpperCase());
-        List<House> houseList = houseService.findAllHouses().stream()
+    public ResponseEntity<List<HouseResponseDto>> printHousesByCondition(@PathVariable final String houseCondition) {
+        final HouseCondition houseConditionEnum = HouseCondition.valueOf(houseCondition.toUpperCase());
+        final List<House> houseList = houseService.findAllHouses().stream()
                 .filter(house -> house.getHouseCondition().getTextCondition().equals(houseConditionEnum.getTextCondition()))
                 .toList();
 
-        List<HouseResponseDto> houseResponseDtos = houseList.stream()
+        final List<HouseResponseDto> houseResponseDtos = houseList.stream()
                 .map(HouseHelper::convertToResponseDto)
                 .toList();
-        return new ResponseEntity<>(houseResponseDtos,HttpStatus.OK);
+        return new ResponseEntity<>(houseResponseDtos, HttpStatus.OK);
     }
 
     @GetMapping("/house/amenitie/{houseAmenitie}")
-    public ResponseEntity<List<HouseResponseDto>> printHousesByAmenity(@PathVariable String houseAmenitie) {
-        HouseAmenitie houseAmenitieEnum = HouseAmenitie.valueOf(houseAmenitie.toUpperCase());
-        List<House> houseList = houseService.findAllHouses().stream()
+    public ResponseEntity<List<HouseResponseDto>> printHousesByAmenity(@PathVariable final String houseAmenitie) {
+        final HouseAmenitie houseAmenitieEnum = HouseAmenitie.valueOf(houseAmenitie.toUpperCase());
+        final List<House> houseList = houseService.findAllHouses().stream()
                 .filter(house -> house.getHouseAmenities().contains(houseAmenitieEnum))
                 .toList();
 
-        List<HouseResponseDto> houseResponseDtos = houseList.stream()
+        final List<HouseResponseDto> houseResponseDtos = houseList.stream()
                 .map(HouseHelper::convertToResponseDto)
                 .toList();
-        return new ResponseEntity<>(houseResponseDtos,HttpStatus.OK);
+        return new ResponseEntity<>(houseResponseDtos, HttpStatus.OK);
     }
 
 }

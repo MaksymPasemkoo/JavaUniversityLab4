@@ -4,7 +4,6 @@ import com.ltp.javauniversitylab4.utils.HotelAmenitie;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +18,7 @@ public class Hotel {
     @ElementCollection
     @CollectionTable(name = "hotel_amenities",joinColumns = @JoinColumn(name = "hotel_id"))
     @Column(name = "amenity")
-    private List<HotelAmenitie> hotelAmenities = new ArrayList<>(HotelAmenitie.getAmenities());
+    private final List<HotelAmenitie> hotelAmenities = new ArrayList<>(HotelAmenitie.getAmenities());
 
     public Hotel(String hotelName) {
         this.hotelName = hotelName;

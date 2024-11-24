@@ -6,7 +6,6 @@ house:
 }
 
 
-
 hotel:
 {
   "hotelName": "Grand Resort"
@@ -23,9 +22,9 @@ client:
 
 reserve:
 {
-  "houseId": 1,
-  "clientId": 1,
-  "date": "24-11-2024"
+  "houseId": 4,
+  "clientId": 4,
+  "date": "28-11-2024"
 }
 
 

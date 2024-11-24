@@ -8,23 +8,26 @@ import com.ltp.javauniversitylab4.repository.HouseRepository;
 import com.ltp.javauniversitylab4.utils.HouseCondition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Collection;
 import java.util.List;
 
 @Service
 public class HouseService {
     @Autowired
-    private HouseRepository houseRepository;
+    private final HouseRepository houseRepository;
     @Autowired
-    private HotelRepository hotelRepository;
+    private final HotelRepository hotelRepository;
 
-    public void addOrUpdateHouse(HouseRequestDto houseDto) {
-        HouseCondition houseCondition = houseDto.getHouseCondition();
-        int personInHouse = houseDto.getPersonInHouse();
-        Hotel hotel = hotelRepository.findById(houseDto.getHotelId()).orElse(null);
+    public HouseService(final HouseRepository houseRepository, final HotelRepository hotelRepository) {
+        this.houseRepository = houseRepository;
+        this.hotelRepository = hotelRepository;
+    }
 
-        House house = new House(houseCondition, personInHouse, hotel);
+    public void addOrUpdateHouse(final HouseRequestDto houseDto) {
+        final HouseCondition houseCondition = houseDto.getHouseCondition();
+        final int personInHouse = houseDto.getPersonInHouse();
+        final Hotel hotel = hotelRepository.findById(houseDto.getHotelId()).orElse(null);
+
+        final House house = new House(houseCondition, personInHouse, hotel);
         houseRepository.save(house);
     }
 
@@ -32,18 +35,17 @@ public class HouseService {
         return houseRepository.findAll();
     }
 
-    public House findHouseById(Long id) {
+    public House findHouseById(final Long id) {
         return houseRepository.findById(id).orElse(new House(-1L));
     }
 
-    public void updateHouse(House house){
+    public void updateHouse(final House house) {
         houseRepository.save(house);
     }
 
-    public void deleteHouseById(Long id) {
+    public void deleteHouseById(final Long id) {
         houseRepository.deleteById(id);
     }
-
 
 
 }

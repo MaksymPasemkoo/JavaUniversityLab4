@@ -1,7 +1,6 @@
 package com.ltp.javauniversitylab4.utils;
 
 import lombok.Getter;
-import org.springframework.stereotype.Component;
 
 @Getter
 public enum HouseCondition {

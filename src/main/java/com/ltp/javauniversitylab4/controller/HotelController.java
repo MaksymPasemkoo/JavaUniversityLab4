@@ -10,26 +10,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.Month;
 import java.util.List;
 
 @RestController
 public class HotelController {
     @Autowired
-    private HotelService hotelService;
+    private final HotelService hotelService;
+
+    public HotelController(final HotelService hotelService) {
+        this.hotelService = hotelService;
+    }
 
 
     @PostMapping("/hotel")
-    public ResponseEntity<String> addHotel(@RequestBody HotelRequestDto hotelRequestDto) {
+    public ResponseEntity<String> addHotel(@RequestBody final HotelRequestDto hotelRequestDto) {
         hotelService.addOrUpdateHotel(hotelRequestDto);
         return new ResponseEntity<>("Success", HttpStatus.ACCEPTED);
     }
 
     @GetMapping("hotel/{id}")
-    public ResponseEntity<HotelResponseDto> findHotelById(@PathVariable Long id) {
-        Hotel hotel = hotelService.findHotelById(id);
-        HotelResponseDto hotelResponseDto = HotelHelper.convertToResponseDto(hotel);
+    public ResponseEntity<HotelResponseDto> findHotelById(@PathVariable final Long id) {
+        final Hotel hotel = hotelService.findHotelById(id);
+        final HotelResponseDto hotelResponseDto = HotelHelper.convertToResponseDto(hotel);
         if (hotel.getHotelId() != -1) {
             return new ResponseEntity<>(hotelResponseDto, HttpStatus.OK);
         }
@@ -37,37 +40,42 @@ public class HotelController {
     }
 
     @PutMapping("/hotel")
-    public ResponseEntity<String> updateHotel(@RequestBody HotelRequestDto hotelRequestDto) {
+    public ResponseEntity<String> updateHotel(@RequestBody final HotelRequestDto hotelRequestDto) {
         hotelService.addOrUpdateHotel(hotelRequestDto);
         return new ResponseEntity<>("Success", HttpStatus.ACCEPTED);
     }
 
     @DeleteMapping("hotel/{id}")
-    public ResponseEntity<String> deleteHotelById(@PathVariable Long id) {
+    public ResponseEntity<String> deleteHotelById(@PathVariable final Long id) {
         hotelService.deleteHotelById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/hotels")
-    public ResponseEntity<List<Hotel>> findAllHotels() {
-        List<Hotel> hotels = hotelService.findAllHotels();
+    public ResponseEntity<List<HotelResponseDto>> findAllHotels() {
+        final List<Hotel> hotels = hotelService.findAllHotels();
+
+        final List<HotelResponseDto> hotelResponseDtos = hotels.stream()
+                .map(HotelHelper::convertToResponseDto)
+                .toList();
+
         if (!hotels.isEmpty()) {
-            return new ResponseEntity<>(hotels, HttpStatus.OK);
+            return new ResponseEntity<>(hotelResponseDtos, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/hotel/income")
     public ResponseEntity<Double> printIncome() {
-        double income = hotelService.findALlHouses().stream()
+        final double income = hotelService.findALlHouses().stream()
                 .mapToDouble(
                         house -> {
-                            Reserve reserve = hotelService.findReserveByHouse(house);
+                            final Reserve reserve = hotelService.findReserveByHouse(house);
                             if (reserve == null) {
                                 return 0;
                             }
-                            Month reservationMonth = reserve.getDate().getMonth();
-                            return HouseHelper.priceOfHouse(house,reservationMonth);
+                            final Month reservationMonth = reserve.getDate().getMonth();
+                            return HouseHelper.priceOfHouse(house, reservationMonth);
                         }
                 )
                 .sum();
@@ -76,16 +84,16 @@ public class HotelController {
 
     @GetMapping("/hotel/expense")
     public ResponseEntity<Double> printExpense() {
-        double expense = hotelService.findALlHouses().stream()
+        final double expense = hotelService.findALlHouses().stream()
                 .mapToDouble(
                         house -> {
-                            Reserve reserve = hotelService.findReserveByHouse(house);
+                            final Reserve reserve = hotelService.findReserveByHouse(house);
                             if (reserve == null) {
                                 return 0;
                             }
-                            Month reservationMonth = reserve.getDate().getMonth();
+                            final Month reservationMonth = reserve.getDate().getMonth();
 
-                            return HouseHelper.expenseOfHouse(house,reservationMonth);
+                            return HouseHelper.expenseOfHouse(house, reservationMonth);
 
                         }
                 )
@@ -95,10 +103,9 @@ public class HotelController {
 
     @GetMapping("/hotel/amenities")
     public ResponseEntity<List<HotelAmenitie>> printHotelAmenities() {
-        List<HotelAmenitie> hotelAmenities = HotelAmenitie.getAmenities();
-        return new ResponseEntity<>(hotelAmenities,HttpStatus.OK);
+        final List<HotelAmenitie> hotelAmenities = HotelAmenitie.getAmenities();
+        return new ResponseEntity<>(hotelAmenities, HttpStatus.OK);
     }
-
 
 
 }

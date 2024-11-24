@@ -1,5 +1,4 @@
 package com.ltp.javauniversitylab4.controller;
-
 import com.ltp.javauniversitylab4.dto.request.ClientRequestDto;
 import com.ltp.javauniversitylab4.dto.response.ClientResponseDto;
 import com.ltp.javauniversitylab4.model.Client;
@@ -10,24 +9,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @Controller
 public class ClientController {
     @Autowired
-    private ClientService clientService;
+    private final ClientService clientService;
+
+    public ClientController(final ClientService clientService) {
+        this.clientService = clientService;
+    }
 
     @PostMapping("/client")
-    public ResponseEntity<String> addClient(@RequestBody ClientRequestDto clientDto) {
+    public ResponseEntity<String> addClient(@RequestBody final ClientRequestDto clientDto) {
         clientService.addOrUpdateClient(clientDto);
         return new ResponseEntity<>("Success", HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/client/{id}")
-    public ResponseEntity<ClientResponseDto> findClientById(@PathVariable Long id) {
-        Client client = clientService.findClientById(id);
-        ClientResponseDto clientResponseDto = ClientHelper.convertToResponseDto(client);
+    public ResponseEntity<ClientResponseDto> findClientById(@PathVariable final Long id) {
+        final Client client = clientService.findClientById(id);
+        final ClientResponseDto clientResponseDto = ClientHelper.convertToResponseDto(client);
         if (client.getClientId() != -1) {
             return new ResponseEntity<>(clientResponseDto, HttpStatus.OK);
         }
@@ -35,14 +37,14 @@ public class ClientController {
     }
 
     @PutMapping("/client")
-    public ResponseEntity<String> updateClient(@RequestBody ClientRequestDto clientDto) {
+    public ResponseEntity<String> updateClient(@RequestBody final ClientRequestDto clientDto) {
         clientService.addOrUpdateClient(clientDto);
         return new ResponseEntity<>("Updated", HttpStatus.ACCEPTED);
     }
 
     @DeleteMapping("/client/{id}")
-    public ResponseEntity<String> deleteClientById(@PathVariable Long id) {
-        Client client = clientService.findClientById(id);
+    public ResponseEntity<String> deleteClientById(@PathVariable final Long id) {
+        final Client client = clientService.findClientById(id);
         if (client != null) {
             clientService.deleteClientById(id);
             return new ResponseEntity<>("Deleted", HttpStatus.OK);
@@ -52,9 +54,9 @@ public class ClientController {
 
     @GetMapping("/clients")
     public ResponseEntity<List<ClientResponseDto>> findAllClients() {
-        List<Client> clients = clientService.findAllClients();
+        final List<Client> clients = clientService.findAllClients();
 
-        List<ClientResponseDto> clientResponseDtos = clients.stream()
+        final List<ClientResponseDto> clientResponseDtos = clients.stream()
                 .map(ClientHelper::convertToResponseDto)
                 .toList();
         if (!clientResponseDtos.isEmpty()) {
@@ -62,7 +64,6 @@ public class ClientController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
 
 
 }

@@ -1,6 +1,5 @@
 package com.ltp.javauniversitylab4.dto.response;
 
-import com.ltp.javauniversitylab4.model.Client;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

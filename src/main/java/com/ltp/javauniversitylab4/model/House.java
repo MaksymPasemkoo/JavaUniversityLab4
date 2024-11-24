@@ -6,10 +6,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @NoArgsConstructor
@@ -24,7 +22,7 @@ public class House {
     @ElementCollection
     @CollectionTable(name = "house_amenities",joinColumns = @JoinColumn(name = "house_id"))
     @Column(name = "amenity")
-    private List<HouseAmenitie> houseAmenities = new ArrayList<>();
+    private final List<HouseAmenitie> houseAmenities = new ArrayList<>();
     @ManyToOne
     private Hotel hotel;
 

@@ -5,26 +5,29 @@ import com.ltp.javauniversitylab4.model.Client;
 import com.ltp.javauniversitylab4.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
 public class ClientService {
     @Autowired
-    private ClientRepository clientRepository;
+    private final ClientRepository clientRepository;
 
-    public void addOrUpdateClient(ClientRequestDto clientDto) {
-        String name = clientDto.getName();
-        double balance = clientDto.getBalance();
-        Client client = new Client(name,balance);
+    public ClientService(final ClientRepository clientRepository) {
+        this.clientRepository = clientRepository;
+    }
+
+    public void addOrUpdateClient(final ClientRequestDto clientDto) {
+        final String name = clientDto.getName();
+        final double balance = clientDto.getBalance();
+        final Client client = new Client(name, balance);
         clientRepository.save(client);
     }
 
-    public Client findClientById(Long id) {
+    public Client findClientById(final Long id) {
         return clientRepository.findById(id).orElse(new Client(-1L));
     }
 
-    public void deleteClientById(Long id) {
+    public void deleteClientById(final Long id) {
         clientRepository.deleteById(id);
     }
 

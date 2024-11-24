@@ -1,7 +1,6 @@
 package com.ltp.javauniversitylab4.utils;
 
 import lombok.Getter;
-
 import java.util.Arrays;
 import java.util.List;
 
