@@ -1,0 +1,32 @@
+house:
+{
+    "hotelId": 1,
+    "houseCondition": "LUXURY",
+    "personInHouse": 2
+}
+
+
+
+hotel:
+{
+  "hotelName": "Grand Resort"
+}
+
+
+
+client:
+{
+  "name": "John Doe",
+  "balance": 1500.75
+}
+
+
+reserve:
+{
+  "houseId": 2,
+  "clientId": 1,
+  "date": "2024-11-25"
+}
+
+
+
